@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商品管理 - 分拣系统</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
 </head>
 <body>
     <!-- 顶部导航栏 -->
@@ -67,19 +67,19 @@
                         </th>
                         <th class="sortable col-id" data-field="id">ID</th>
                         <th class="col-photo">照片</th>
-                        <th class="sortable" data-field="customer_name">客户名</th>
-                        <th class="sortable" data-field="size">尺码</th>
-                        <th class="sortable" data-field="quantity">件数</th>
+                        <th data-field="customer_name">客户名</th>
+                        <th data-field="size">尺码</th>
+                        <th data-field="quantity">件数</th>
                         <th class="col-address">收件地址</th>
-                        <th class="col-photo">货物状态备注图片</th>
-                        <th class="sortable" data-field="updated_at">更新时间</th>
-                        <th class="sortable" data-field="cost_eur">成本欧元</th>
-                        <th class="sortable" data-field="exchange_rate">结账汇率</th>
-                        <th class="sortable" data-field="cost_rmb">成本RMB</th>
-                        <th class="sortable" data-field="price_rmb">售价RMB</th>
-                        <th class="sortable" data-field="shipping_fee">国际运费与清关费</th>
-                        <th class="sortable" data-field="total_cost">总成本</th>
-                        <th class="sortable" data-field="profit">净利润利润</th>
+                        <th class="col-photo">货物状态</th>
+                        <th data-field="updated_at">更新时间</th>
+                        <th data-field="cost_eur">成本欧元</th>
+                        <th data-field="exchange_rate">结账汇率</th>
+                        <th data-field="cost_rmb">成本RMB</th>
+                        <th data-field="price_rmb">售价RMB</th>
+                        <th data-field="shipping_fee">国际运费与清关费</th>
+                        <th data-field="total_cost">总成本</th>
+                        <th data-field="profit">净利润利润</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -128,7 +128,7 @@
         </div>
     </div>
 
-    <script src="/static/js/common.js?v=1"></script>
-    <script src="/static/js/main.js?v=1"></script>
+    <script src="/static/js/common.js?v=2"></script>
+    <script src="/static/js/main.js?v=2"></script>
 </body>
 </html>
