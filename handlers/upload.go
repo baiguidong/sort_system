@@ -27,11 +27,15 @@ func UploadImage(c *gin.Context) {
 		return
 	}
 
-	// 检查文件类型
+	// // 检查文件类型
 	ext := strings.ToLower(filepath.Ext(file.Filename))
-	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".gif" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "只支持 jpg, jpeg, png, gif 格式"})
-		return
+	// if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".gif" {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "只支持 jpg, jpeg, png, gif 格式"})
+	// 	return
+	// }
+
+	if ext==""{
+		ext=".jpeg"
 	}
 
 	// 创建上传目录

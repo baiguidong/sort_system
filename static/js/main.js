@@ -458,15 +458,82 @@ function allowDrop(event) {
     event.preventDefault();  // Prevent the default handling of the event (e.g., opening the file)
 }
 
-async function dropImage(event, productId, field) {
-    event.preventDefault();
-    const files = event.dataTransfer.files;
-
-    if (files.length > 0 && files[0].type.startsWith('image/')) {
-        await uploadImageForProductFromFile(files[0], productId, field);
+async function fetchImageAsFile(url) {
+    try {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const file = new File([blob], "image.jpg", { type: blob.type });
+        return file;
+    } catch (e) {
+        console.error("无法读取拖拽图片", e);
+        return null;
     }
 }
 
+async function dropImage(event, productId, field) {
+    event.preventDefault();
+
+    const dt = event.dataTransfer;
+
+    // 1) 先处理本地文件
+    if (dt.files.length > 0 && dt.files[0].type.startsWith('image/')) {
+        await uploadImageForProductFromFile(dt.files[0], productId, field);
+        return;
+    }
+
+    // 2) 处理拖拽网页图片（朋友圈 / 浏览器图片）
+    for (const item of dt.items) {
+        if (item.kind === 'string' && (item.type === 'text/uri-list' || item.type === 'text/plain')) {
+            item.getAsString(async (url) => {
+                // 下载图片并转成 File 再上传
+                const file = await fetchImageAsFile(url);
+                if (file) {
+                    await uploadImageForProductFromFile(file, productId, field);
+                }
+            });
+            return;
+        }
+
+        if (item.kind === 'file') {
+            const file = item.getAsFile();
+            if (file && file.type.startsWith('image/')) {
+                await uploadImageForProductFromFile(file, productId, field);
+                return;
+            }
+            if (file && file.type === "") {
+                const fixedFile = await fixFileType(file);
+                await uploadImageForProductFromFile(fixedFile, productId, field);
+                return;
+            }
+        }
+    }
+}
+
+async function fixFileType(file) {
+    if (file.type) return file; // 正常图片不处理
+
+    const buf = await file.arrayBuffer();
+
+    // 尝试判断真实图片格式（JPEG/PNG/GIF/WebP）
+    const bytes = new Uint8Array(buf);
+
+    let type = "image/jpeg"; // 默认 JPEG（朋友圈大部分是这个）
+
+    // PNG signature
+    if (bytes[0] === 0x89 && bytes[1] === 0x50) {
+        type = "image/png";
+    }
+    // GIF signature
+    else if (bytes[0] === 0x47 && bytes[1] === 0x49) {
+        type = "image/gif";
+    }
+    // WebP header
+    else if (String.fromCharCode(...bytes.slice(0, 4)) === "RIFF") {
+        type = "image/webp";
+    }
+
+    return new File([buf], file.name || "drag-image.jpg", { type });
+}
 
 async function uploadImageForProductFromFile(file, productId, field) {
     if (!file) return;

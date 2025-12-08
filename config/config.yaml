@@ -1,12 +1,12 @@
 server:
-  port: 8222
+  port: 8088
 
 database:
   host: localhost
   port: 3306
   username: root
   password: cc_v2
-  database: sorting_db
+  database: cc
   charset: utf8mb4
 
 upload:
