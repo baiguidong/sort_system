@@ -1,0 +1,14 @@
+server:
+  port: 8222
+
+database:
+  host: localhost
+  port: 3306
+  username: root
+  password: cc_v2
+  database: sorting_db
+  charset: utf8mb4
+
+upload:
+  path: ./uploads
+  max_size: 10485760  # 10MB

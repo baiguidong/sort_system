@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品管理 - 分拣系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-left">
+            <h1>分拣系统</h1>
+        </div>
+        <!-- Tab 导航 -->
+        <div class="tab-nav">
+            <div class="tab-items" id="tabItems">
+                <!-- 动态区域 tabs -->
+            </div>
+            <button class="tab-item tab-manage" onclick="location.href='/area'">区域管理</button>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span id="userName">用户</span>
+                <div class="user-dropdown">
+                    <button class="btn-text" onclick="showUserInfo()">个人信息</button>
+                    <button class="btn-text" onclick="logout()">退出系统</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 工具栏 -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="btn-add" onclick="addProduct()">
+                <span class="btn-icon">+</span> 增加
+            </button>
+            <button class="btn-delete" onclick="deleteSelected()" id="deleteBtn" disabled>
+                <span class="btn-icon">×</span> 删除
+            </button>
+            <button class="btn-refresh" onclick="loadProducts()">
+                <span class="btn-icon">↻</span> 刷新
+            </button>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索客户名、尺码、地址..." onkeypress="handleSearchKeyPress(event)">
+                <input type="datetime-local" id="startTime" placeholder="开始时间">
+                <input type="datetime-local" id="endTime" placeholder="结束时间">
+                <button class="btn-search" onclick="handleSearch()">
+                    <span class="btn-icon">🔍</span> 查询
+                </button>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <span class="total-info">共 <span id="totalCount">0</span> 条</span>
+        </div>
+    </div>
+
+    <!-- 表格容器 -->
+    <div class="table-wrapper">
+        <div class="table-container" id="tableContainer">
+            <table class="data-table" id="dataTable">
+                <thead>
+                    <tr>
+                        <th class="col-checkbox">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                        </th>
+                        <th class="col-photo">照片</th>
+                        <th class="sortable" data-field="customer_name">客户名</th>
+                        <th class="sortable" data-field="size">尺码</th>
+                        <th class="sortable" data-field="quantity">件数</th>
+                        <th>收件地址</th>
+                        <th class="col-photo">货物状态备注图片</th>
+                        <th class="sortable" data-field="updated_at">更新时间</th>
+                        <th class="sortable" data-field="cost_eur">成本欧元</th>
+                        <th class="sortable" data-field="exchange_rate">结账汇率</th>
+                        <th class="sortable" data-field="cost_rmb">成本RMB</th>
+                        <th class="sortable" data-field="price_rmb">售价RMB</th>
+                        <th class="sortable" data-field="shipping_fee">国际运费与清关费</th>
+                        <th class="sortable" data-field="total_cost">总成本</th>
+                        <th class="sortable" data-field="profit">净利润利润</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- 数据行 -->
+                </tbody>
+                <tfoot id="tableFoot">
+                    <!-- 汇总行 -->
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- 分页 -->
+    <div class="pagination" id="pagination">
+        <button class="btn-prev" onclick="prevPage()" id="prevBtn">上一页</button>
+        <div class="page-numbers" id="pageNumbers"></div>
+        <button class="btn-next" onclick="nextPage()" id="nextBtn">下一页</button>
+        <div class="page-info">
+            <span>共 <span id="totalPagesText">1</span> 页</span>
+            <span>|</span>
+            <span>共 <span id="totalCountInPagination">0</span> 条</span>
+        </div>
+    </div>
+
+    <!-- 图片预览模态框 -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content image-modal-content">
+            <span class="close" onclick="closeImageModal()">&times;</span>
+            <img id="modalImage" src="" alt="预览图片">
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="changeImage()">修改图片</button>
+                <input type="file" id="imageUpload" accept="image/*" style="display:none" onchange="uploadNewImage()">
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户信息模态框 -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUserModal()">&times;</span>
+            <h2>用户信息</h2>
+            <div class="user-info-detail">
+                <p><strong>用户ID:</strong> <span id="userIdDisplay"></span></p>
+                <p><strong>用户名:</strong> <span id="userNameDisplay"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

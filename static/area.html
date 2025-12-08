@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>区域管理 - 分拣系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-left">
+            <h1>分拣系统</h1>
+        </div>
+        <!-- Tab 导航 -->
+        <div class="tab-nav">
+            <div class="tab-items" id="tabItems">
+                <!-- 动态区域 tabs -->
+            </div>
+            <button class="tab-item tab-manage active" onclick="location.href='/area'">区域管理</button>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span id="userName">用户</span>
+                <div class="user-dropdown">
+                    <button class="btn-text" onclick="showUserInfo()">个人信息</button>
+                    <button class="btn-text" onclick="logout()">退出系统</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 工具栏 -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="btn-add" onclick="addArea()">
+                <span class="btn-icon">+</span> 新增区域
+            </button>
+            <button class="btn-delete" onclick="deleteSelectedAreas()" id="deleteBtn" disabled>
+                <span class="btn-icon">×</span> 删除
+            </button>
+            <button class="btn-refresh" onclick="loadAreas()">
+                <span class="btn-icon">↻</span> 刷新
+            </button>
+        </div>
+        <div class="toolbar-right">
+            <span class="total-info">共 <span id="totalCount">0</span> 个区域</span>
+        </div>
+    </div>
+
+    <!-- 表格容器 -->
+    <div class="table-wrapper">
+        <div class="table-container">
+            <table class="data-table" id="areaTable">
+                <thead>
+                    <tr>
+                        <th class="col-checkbox">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                        </th>
+                        <th>ID</th>
+                        <th>区域名称</th>
+                        <th>描述</th>
+                        <th>创建时间</th>
+                        <th>更新时间</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- 数据行 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 用户信息模态框 -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUserModal()">&times;</span>
+            <h2>用户信息</h2>
+            <div class="user-detail">
+                <p><strong>用户ID：</strong><span id="modalUserId"></span></p>
+                <p><strong>用户名：</strong><span id="modalUserName"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加区域模态框 -->
+    <div id="addAreaModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddAreaModal()">&times;</span>
+            <h2>新增区域</h2>
+            <form id="addAreaForm" onsubmit="submitAddArea(event)">
+                <div class="form-group">
+                    <label for="areaName">区域名称 <span style="color: red;">*</span></label>
+                    <input type="text" id="areaName" name="name" required placeholder="请输入区域名称">
+                </div>
+                <div class="form-group">
+                    <label for="areaDescription">区域描述</label>
+                    <textarea id="areaDescription" name="description" rows="4" placeholder="请输入区域描述（可选）"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeAddAreaModal()">取消</button>
+                    <button type="submit" class="btn-primary">确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/area.js"></script>
+</body>
+</html>
