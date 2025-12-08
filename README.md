@@ -77,10 +77,10 @@ ss/
 mysql -u root -p
 
 # 创建数据库
-CREATE DATABASE sorting_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE cc CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 # 导入表结构
-USE sorting_db;
+USE cc;
 SOURCE database/schema.sql;
 ```
 
@@ -94,7 +94,7 @@ database:
   port: 3306
   username: root
   password: your_password  # 修改为你的密码
-  database: sorting_db
+  database: cc
   charset: utf8mb4
 ```
 

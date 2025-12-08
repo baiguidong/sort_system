@@ -10,6 +10,10 @@ window.addEventListener('DOMContentLoaded', function() {
     if (userInfo) {
         document.getElementById('userName').textContent = userInfo.name;
     }
+
+    // 初始化列宽调整功能
+    initColumnResize('#areaTable');
+
     loadAreas();
     loadTabsForAreaPage();
 });

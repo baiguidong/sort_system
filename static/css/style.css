@@ -403,6 +403,7 @@ body {
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
     white-space: nowrap;
     font-size: 13px;
+    position: relative;
 }
 
 .data-table th.sortable {
@@ -539,6 +540,30 @@ body {
     background-color: #f8f9fa;
     color: #495057;
     font-weight: 500;
+}
+
+/* 列宽拖动调整 */
+.resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 1;
+    background: transparent;
+}
+
+.resize-handle:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.resize-handle.resizing {
+    background: rgba(255, 215, 0, 0.6);
+}
+
+.data-table th.resizing {
+    user-select: none;
 }
 
 /* 分页 */

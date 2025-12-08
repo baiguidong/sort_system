@@ -149,3 +149,60 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// 初始化表格列宽调整功能
+function initColumnResize(tableSelector) {
+    const table = document.querySelector(tableSelector);
+    if (!table) return;
+
+    const thead = table.querySelector('thead');
+    if (!thead) return;
+
+    const ths = thead.querySelectorAll('th');
+
+    ths.forEach((th, index) => {
+        // 为每个 th 添加拖动手柄
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';
+        th.appendChild(resizeHandle);
+
+        let startX = 0;
+        let startWidth = 0;
+        let currentTh = null;
+
+        resizeHandle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            currentTh = th;
+            startX = e.pageX;
+            startWidth = th.offsetWidth;
+
+            resizeHandle.classList.add('resizing');
+            th.classList.add('resizing');
+
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        });
+
+        function handleMouseMove(e) {
+            if (!currentTh) return;
+
+            const diff = e.pageX - startX;
+            const newWidth = Math.max(50, startWidth + diff); // 最小宽度 50px
+            currentTh.style.width = newWidth + 'px';
+            currentTh.style.minWidth = newWidth + 'px';
+        }
+
+        function handleMouseUp() {
+            if (currentTh) {
+                resizeHandle.classList.remove('resizing');
+                currentTh.classList.remove('resizing');
+                currentTh = null;
+            }
+
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        }
+    });
+}

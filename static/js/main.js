@@ -66,6 +66,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化排序点击事件
     initSortable();
 
+    // 初始化列宽调整功能
+    initColumnResize('#dataTable');
+
     // 加载区域tabs
     loadTabs();
 
