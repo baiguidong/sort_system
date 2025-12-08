@@ -26,8 +26,7 @@ CREATE TABLE `cc_product_area` (
   `description` VARCHAR(500) DEFAULT NULL COMMENT '区域描述',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  KEY `idx_user_id` (`user_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `cc_user` (`id`) ON DELETE CASCADE
+  KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='区域表';
 
 -- ----------------------------
@@ -54,9 +53,7 @@ CREATE TABLE `cc_product` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `idx_user_id` (`user_id`),
-  KEY `idx_area_id` (`area_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `cc_user` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`area_id`) REFERENCES `cc_product_area` (`id`) ON DELETE SET NULL
+  KEY `idx_area_id` (`area_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品表';
 
 -- ----------------------------

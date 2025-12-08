@@ -1,6 +1,13 @@
 # 第一阶段: 构建阶段
 FROM golang:1.21-alpine AS builder
 
+RUN echo "https://mirrors.tencent.com/alpine/v3.19/main" > /etc/apk/repositories \
+ && echo "https://mirrors.tencent.com/alpine/v3.19/community" >> /etc/apk/repositories \
+ && apk update
+
+ENV GOPROXY=https://goproxy.cn,direct \
+    GOSUMDB=sum.golang.org
+    
 # 安装必要的编译工具
 RUN apk add --no-cache git gcc musl-dev
 
