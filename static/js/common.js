@@ -161,6 +161,13 @@ function initColumnResize(tableSelector) {
     const ths = thead.querySelectorAll('th');
 
     ths.forEach((th, index) => {
+        // 应用初始宽度(如果CSS中有定义)
+        const computedWidth = window.getComputedStyle(th).width;
+        if (computedWidth && computedWidth !== 'auto') {
+            th.style.width = computedWidth;
+            th.style.minWidth = computedWidth;
+        }
+
         // 为每个 th 添加拖动手柄
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'resize-handle';

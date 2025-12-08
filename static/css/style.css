@@ -464,6 +464,16 @@ body {
     text-align: center;
 }
 
+.col-id {
+    width: 60px;
+    min-width: 60px;
+}
+
+.col-address {
+    width: 300px;
+    min-width: 200px;
+}
+
 .col-photo {
     width: 100px;
 }
