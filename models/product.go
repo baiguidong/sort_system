@@ -125,10 +125,10 @@ func UpdateProduct(p *Product) error {
 		area_id=?, photo=?, customer_name=?, size=?, quantity=?, address=?, status_note_photo=?,
 		cost_eur=?, exchange_rate=?, cost_rmb=?, price_rmb=?, shipping_fee=?,
 		total_cost=?, profit=?
-		WHERE id=? AND user_id=?`,
+		WHERE id=?`,
 		p.AreaID, p.Photo, p.CustomerName, p.Size, p.Quantity, p.Address, p.StatusNotePhoto,
 		p.CostEur, p.ExchangeRate, p.CostRMB, p.PriceRMB, p.ShippingFee,
-		p.TotalCost, p.Profit, p.ID, p.UserID,
+		p.TotalCost, p.Profit, p.ID,
 	)
 	return err
 }
@@ -194,14 +194,13 @@ func DeleteProducts(ids []int, userID int) error {
 
 	placeholders := make([]string, len(ids))
 	args := make([]interface{}, len(ids)+1)
-	args[0] = userID
 
 	for i, id := range ids {
 		placeholders[i] = "?"
-		args[i+1] = id
+		args[i] = id
 	}
 
-	query := fmt.Sprintf("DELETE FROM cc_product WHERE user_id=? AND id IN (%s)",
+	query := fmt.Sprintf("DELETE FROM cc_product WHERE id IN (%s)",
 		strings.Join(placeholders, ","))
 	_, err := database.DB.Exec(query, args...)
 	return err
@@ -213,8 +212,8 @@ func GetProductByID(id, userID int) (*Product, error) {
 		`SELECT id, user_id, area_id, photo, customer_name, size, quantity, address, status_note_photo,
 		cost_eur, exchange_rate, cost_rmb, price_rmb, shipping_fee, total_cost, profit,
 		created_at, updated_at
-		FROM cc_product WHERE id=? AND user_id=?`,
-		id, userID,
+		FROM cc_product WHERE id=?`,
+		id,
 	).Scan(
 		&p.ID, &p.UserID, &p.AreaID, &p.Photo, &p.CustomerName, &p.Size, &p.Quantity, &p.Address, &p.StatusNotePhoto,
 		&p.CostEur, &p.ExchangeRate, &p.CostRMB, &p.PriceRMB, &p.ShippingFee, &p.TotalCost, &p.Profit,
@@ -248,8 +247,11 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 	}
 
 	// 构建WHERE条件
-	whereClause := "WHERE user_id=?"
-	args := []interface{}{userID}
+	// whereClause := "WHERE user_id=?"
+	// args := []interface{}{userID}
+
+	whereClause := "WHERE 1=1"
+	args := []interface{}{}
 
 	// 添加区域过滤
 	if areaID != nil {
@@ -311,6 +313,15 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 		if err != nil {
 			return nil, err
 		}
+		if userID!=1{
+			p.CostEur=0.0
+			p.ExchangeRate=0.0
+			p.CostRMB=0.0
+			p.TotalCost=0.0
+			p.Profit=0.0
+			p.ShippingFee=0.0
+		}
+
 		list = append(list, p)
 	}
 
@@ -332,8 +343,8 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 func GetSummary(userID int, areaID *int) (*Summary, error) {
 	summary := &Summary{}
 
-	whereClause := "WHERE user_id=?"
-	args := []interface{}{userID}
+	whereClause := "WHERE 1=1"
+	args := []interface{}{}
 
 	// 添加区域过滤
 	if areaID != nil {
@@ -365,6 +376,14 @@ func GetSummary(userID int, areaID *int) (*Summary, error) {
 	)
 	if err != nil {
 		return nil, err
+	}
+	if userID!=1{
+		summary.TotalCostEur=0.0
+		summary.TotalCostRMB=0.0
+		summary.TotalPriceRMB=0.0
+		summary.TotalShippingFee=0.0
+		summary.TotalCost=0.0
+		summary.TotalProfit=0.0
 	}
 	return summary, nil
 }

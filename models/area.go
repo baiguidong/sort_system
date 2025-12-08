@@ -78,8 +78,7 @@ func GetAreaList(userID int) (*AreaListResponse, error) {
 	// 获取总数
 	var total int
 	err := database.DB.QueryRow(
-		`SELECT COUNT(*) FROM cc_product_area WHERE user_id=?`,
-		userID,
+		`SELECT COUNT(*) FROM cc_product_area`,
 	).Scan(&total)
 	if err != nil {
 		return nil, err
@@ -88,8 +87,7 @@ func GetAreaList(userID int) (*AreaListResponse, error) {
 	// 获取列表
 	rows, err := database.DB.Query(
 		`SELECT id, user_id, name, description, created_at, updated_at
-		FROM cc_product_area WHERE user_id=? ORDER BY id ASC`,
-		userID,
+		FROM cc_product_area ORDER BY id ASC`,
 	)
 	if err != nil {
 		return nil, err

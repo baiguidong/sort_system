@@ -195,6 +195,7 @@ function renderProducts(data) {
                 <input type="checkbox" class="row-checkbox" value="${product.id}"
                     onchange="toggleRowSelect(this)" ${selectedIds.has(product.id) ? 'checked' : ''}>
             </td>
+            <td class="calculated-cell">${product.id}</td>
             <td class="col-photo" ondrop="dropImage(event,${product.id}, 'photo')" ondragover="allowDrop(event)">
                 ${product.photo ?
                     `<img src="${product.photo}?w=300&h=300" class="product-image" onclick="viewImage('${product.photo}', ${product.id}, 'photo')">` :
