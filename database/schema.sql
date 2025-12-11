@@ -47,6 +47,24 @@ CREATE TABLE IF NOT EXISTS `cc_product` (
   FOREIGN KEY (`area_id`) REFERENCES `cc_product_area` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品表';
 
+-- 创建到货图表
+CREATE TABLE IF NOT EXISTS `cc_arrival` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `arrival_photo` varchar(500) DEFAULT '' COMMENT '到货照片',
+  `quantity` varchar(100) DEFAULT '' COMMENT '到货件数',
+  `brand` varchar(200) DEFAULT '' COMMENT '到货品牌',
+  `box_number` varchar(200) DEFAULT '' COMMENT '到货箱子单号',
+  `arrival_date` varchar(100) DEFAULT '' COMMENT '到货时间日期',
+  `confirm_person` varchar(100) DEFAULT '' COMMENT '到货点数确认人员',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_arrival_date` (`arrival_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='到货图表';
+
+
 -- 插入测试用户数据
 INSERT INTO `cc_user` (`name`, `pwd`) VALUES
 ('admin', '123456'),

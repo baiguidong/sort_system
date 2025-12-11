@@ -220,7 +220,7 @@ func GetProductByID(id, userID int) (*Product, error) {
 	).Scan(
 		&p.ID, &p.UserID, &p.AreaID, &p.Photo, &p.CustomerName, &p.Size, &p.Quantity, &p.Address, &p.StatusNotePhoto,
 		&p.CostEur, &p.ExchangeRate, &p.CostRMB, &p.PriceRMB, &p.ShippingFee, &p.TotalCost, &p.Profit,
-		&p.CreatedAt, &p.UpdatedAt, p.Mark,
+		&p.CreatedAt, &p.UpdatedAt, &p.Mark,
 	)
 
 	if err == sql.ErrNoRows {

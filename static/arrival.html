@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品管理 - 分拣系统</title>
+    <title>到货图区域 - 分拣系统</title>
     <link rel="stylesheet" href="/static/css/style.css?v=2">
 </head>
 <body>
@@ -17,7 +17,7 @@
             <div class="tab-items" id="tabItems">
                 <!-- 动态区域 tabs -->
             </div>
-            <button class="tab-item" id="arrivalTab" onclick="switchPage('arrival')">到货图区域</button>
+            <button class="tab-item active" id="arrivalTab" onclick="switchPage('arrival')">到货图区域</button>
             <button class="tab-item tab-manage" id="areaTab" onclick="switchPage('area')">区域管理</button>
         </div>
         <div class="header-right">
@@ -34,17 +34,17 @@
     <!-- 工具栏 -->
     <div class="toolbar">
         <div class="toolbar-left">
-            <button class="btn-add" onclick="addProduct()">
+            <button class="btn-add" onclick="addArrival()">
                 <span class="btn-icon">+</span> 增加
             </button>
             <button class="btn-delete" onclick="deleteSelected()" id="deleteBtn" disabled>
                 <span class="btn-icon">×</span> 删除
             </button>
-            <button class="btn-refresh" onclick="loadProducts()">
+            <button class="btn-refresh" onclick="loadArrivals()">
                 <span class="btn-icon">↻</span> 刷新
             </button>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="关键子搜索..." onkeypress="handleSearchKeyPress(event)">
+                <input type="text" id="searchInput" placeholder="关键字搜索..." onkeypress="handleSearchKeyPress(event)">
                 <input type="datetime-local" id="startTime" placeholder="开始时间">
                 <input type="datetime-local" id="endTime" placeholder="结束时间">
                 <button class="btn-search" onclick="handleSearch()">
@@ -67,29 +67,18 @@
                             <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
                         </th>
                         <th class="sortable col-id" data-field="id">ID</th>
-                        <th class="col-photo">照片</th>
-                        <th data-field="customer_name">客户名</th>
-                        <th data-field="size">尺码</th>
-                        <th class="sortable" data-field="quantity">件数</th>
-                        <th class="col-address">收件地址</th>
-                        <th class="col-mark">备注</th>
-                        <th class="col-photo">货物状态</th>
+                        <th class="col-photo">到货照片</th>
+                        <th data-field="quantity">到货件数</th>
+                        <th data-field="brand">到货品牌</th>
+                        <th data-field="box_number">到货箱子单号</th>
+                        <th data-field="arrival_date">到货时间日期</th>
+                        <th data-field="confirm_person">到货点数确认人员</th>
                         <th data-field="updated_at">更新时间</th>
-                        <th class="financial-column" data-field="cost_eur">成本欧元</th>
-                        <th class="financial-column" data-field="exchange_rate">结账汇率</th>
-                        <th class="financial-column" data-field="cost_rmb">成本RMB</th>
-                        <th class="financial-column" data-field="price_rmb">售价RMB</th>
-                        <th class="financial-column" data-field="shipping_fee">国际运费与清关费</th>
-                        <th class="financial-column" data-field="total_cost">总成本</th>
-                        <th class="financial-column" data-field="profit">净利润利润</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
                     <!-- 数据行 -->
                 </tbody>
-                <tfoot id="tableFoot">
-                    <!-- 汇总行 -->
-                </tfoot>
             </table>
         </div>
     </div>
@@ -131,6 +120,6 @@
     </div>
 
     <script src="/static/js/common.js?v=3"></script>
-    <script src="/static/js/main.js?v=3"></script>
+    <script src="/static/js/arrival.js?v=1"></script>
 </body>
 </html>

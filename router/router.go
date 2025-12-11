@@ -42,6 +42,11 @@ func SetupRouter() *gin.Engine {
 		c.File("./static/area.html")
 	})
 
+	// 到货图页面
+	r.GET("/arrival", func(c *gin.Context) {
+		c.File("./static/arrival.html")
+	})
+
 	// 公开接口
 	r.POST("/api/login", handlers.Login)
 
@@ -66,6 +71,14 @@ func SetupRouter() *gin.Engine {
 		api.PUT("/products/:id", handlers.UpdateProduct)
 		api.PATCH("/products/:id/field", handlers.UpdateProductField)
 		api.POST("/products/delete", handlers.DeleteProducts)
+
+		// 到货图管理
+		api.POST("/arrivals", handlers.CreateArrival)
+		api.GET("/arrivals", handlers.GetArrivalList)
+		api.GET("/arrivals/:id", handlers.GetArrival)
+		api.PUT("/arrivals/:id", handlers.UpdateArrival)
+		api.PATCH("/arrivals/:id/field", handlers.UpdateArrivalField)
+		api.POST("/arrivals/delete", handlers.DeleteArrivals)
 
 		// 文件上传
 		api.POST("/upload", handlers.UploadImage)

@@ -213,3 +213,28 @@ function initColumnResize(tableSelector) {
         }
     });
 }
+
+// 页面切换函数 - 使用 JS 控制而不是 location.href
+function switchPage(page) {
+    const urlMap = {
+        'index': '/index',
+        'area': '/area',
+        'arrival': '/arrival'
+    };
+
+    if (urlMap[page]) {
+        // 保存当前状态
+        sessionStorage.setItem('currentPage', page);
+        // 使用 location.href 但不会丢失状态
+        window.location.href = urlMap[page];
+    }
+}
+
+// 获取当前页面
+function getCurrentPage() {
+    const path = window.location.pathname;
+    if (path.includes('/area')) return 'area';
+    if (path.includes('/arrival')) return 'arrival';
+    if (path.includes('/index')) return 'index';
+    return 'index';
+}
