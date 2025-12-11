@@ -227,22 +227,37 @@ function renderProducts(data) {
                     `<img src="${product.photo}?w=300&h=300" class="product-image" onclick="viewImage('${product.photo}', ${product.id}, 'photo')">` :
                     `<div class="product-image placeholder" onclick="uploadImageForProduct(${product.id}, 'photo')">点击上传</div>`
                 }
-            </td>
-
-            <td class="editable-cell" onclick="editCell(this, ${product.id}, 'customer_name')" >${product.customer_name || ''}</td>
-            <td class="editable-cell" onclick="editCell(this, ${product.id}, 'brand')" >${product.brand || ''}</td>
-            <td class="editable-cell" onclick="editCell(this, ${product.id}, 'size')">${product.size || ''}</td>
-            <td class="calculated-cell">${product.quantity || 0}件</td>
-            <td class="editable-cell" onclick="editCell(this, ${product.id}, 'address')">${product.address || ''}</td>
-            <td class="editable-cell" onclick="editCell(this, ${product.id}, 'mark')">${product.mark || ''}</td>
-            <td class="col-photo" ondrop="dropImage(event,${product.id}, 'status_note_photo')" ondragover="allowDrop(event)">
-                ${product.status_note_photo ?
-                    `<img src="${product.status_note_photo}?w=300&h=300" class="product-image" onclick="viewImage('${product.status_note_photo}', ${product.id}, 'status_note_photo')">` :
-                    `<div class="product-image placeholder" onclick="uploadImageForProduct(${product.id}, 'status_note_photo')">点击上传</div>`
-                }
-            </td>
-            <td>${formatDateTime(product.updated_at)}</td>`;
-
+            </td>`;
+         if (isAdmin) {
+            html +=  `<td class="editable-cell" onclick="editCell(this, ${product.id}, 'customer_name')" >${product.customer_name || ''}</td>
+                <td class="editable-cell" onclick="editCell(this, ${product.id}, 'brand')" >${product.brand || ''}</td>
+                <td class="editable-cell" onclick="editCell(this, ${product.id}, 'size')">${product.size || ''}</td>
+                <td class="calculated-cell">${product.quantity || 0}件</td>
+                <td class="editable-cell" onclick="editCell(this, ${product.id}, 'address')">${product.address || ''}</td>
+                <td class="editable-cell" onclick="editCell(this, ${product.id}, 'mark')">${product.mark || ''}</td>
+                <td class="col-photo" ondrop="dropImage(event,${product.id}, 'status_note_photo')" ondragover="allowDrop(event)">
+                    ${product.status_note_photo ?
+                        `<img src="${product.status_note_photo}?w=300&h=300" class="product-image" onclick="viewImage('${product.status_note_photo}', ${product.id}, 'status_note_photo')">` :
+                        `<div class="product-image placeholder" onclick="uploadImageForProduct(${product.id}, 'status_note_photo')">点击上传</div>`
+                    }
+                </td>
+                <td>${formatDateTime(product.updated_at)}</td>`;
+         }else{
+             html +=  `<td >${product.customer_name || ''}</td>
+                <td >${product.brand || ''}</td>
+                <td >${product.size || ''}</td>
+                <td class="calculated-cell">${product.quantity || 0}件</td>
+                <td >${product.address || ''}</td>
+                <td class="editable-cell" onclick="editCell(this, ${product.id}, 'mark')">${product.mark || ''}</td>
+                <td class="col-photo" ondrop="dropImage(event,${product.id}, 'status_note_photo')" ondragover="allowDrop(event)">
+                    ${product.status_note_photo ?
+                        `<img src="${product.status_note_photo}?w=300&h=300" class="product-image" onclick="viewImage('${product.status_note_photo}', ${product.id}, 'status_note_photo')">` :
+                        `<div class="product-image placeholder" onclick="uploadImageForProduct(${product.id}, 'status_note_photo')">点击上传</div>`
+                    }
+                </td>
+                <td>${formatDateTime(product.updated_at)}</td>`;
+         }
+           
         // 只有管理员才显示财务相关列
         if (isAdmin) {
             html += `
@@ -283,15 +298,7 @@ function renderSummary(summary) {
                 <td class="financial-column"><strong>${formatNumber(summary.total_profit)}</strong></td>
             </tr>
         `;
-    } else {
-        tfoot.innerHTML = `
-            <tr>
-                <td colspan="4" style="text-align:right;"><strong>汇总:</strong></td>
-                <td><strong>${summary.total_quantity || 0}件</strong></td>
-                <td colspan="5"></td>
-            </tr>
-        `;
-    }
+    } 
 }
 
 // 更新分页信息
@@ -725,6 +732,12 @@ function updateDeleteButton() {
 
 // 删除选中的产品
 async function deleteSelected() {
+    const userInfo = getUserInfo();
+    const isAdmin = userInfo.user_id === 1;
+    if (!isAdmin) {
+         showMessage('你没有删除权限', 'error');
+         return;
+    }
     if (selectedIds.size === 0) {
         showMessage('请先选择要删除的数据', 'error');
         return;

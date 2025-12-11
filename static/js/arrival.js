@@ -508,6 +508,12 @@ function updateDeleteButton() {
 
 // 删除选中的记录
 async function deleteSelected() {
+    const userInfo = getUserInfo();
+    const isAdmin = userInfo.user_id === 1;
+    if (!isAdmin) {
+         showMessage('你没有删除权限', 'error');
+         return;
+    }
     if (selectedIds.size === 0) {
         showMessage('请先选择要删除的数据', 'error');
         return;

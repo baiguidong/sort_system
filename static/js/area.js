@@ -222,6 +222,12 @@ function updateDeleteButton() {
 
 // 删除选中的区域
 async function deleteSelectedAreas() {
+    const userInfo = getUserInfo();
+    const isAdmin = userInfo.user_id === 1;
+    if (!isAdmin) {
+         showMessage('你没有删除权限', 'error');
+         return;
+    }
     if (selectedAreaIds.size === 0) {
         showMessage('请选择要删除的区域', 'warning');
         return;
