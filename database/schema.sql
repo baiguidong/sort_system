@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `cc_product` (
   `size` VARCHAR(50) DEFAULT NULL COMMENT '尺码',
   `quantity` INT DEFAULT 0 COMMENT '件数（自动从尺码解析）',
   `address` TEXT DEFAULT NULL COMMENT '收件地址',
+  `mark` TEXT DEFAULT NULL COMMENT '备注',
   `status_note_photo` VARCHAR(500) DEFAULT NULL COMMENT '货物状态备注图片',
   `cost_eur` DECIMAL(10,2) DEFAULT 0.00 COMMENT '成本欧元',
   `exchange_rate` DECIMAL(10,4) DEFAULT 0.0000 COMMENT '结账汇率',

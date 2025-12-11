@@ -17,6 +17,7 @@ type Product struct {
 	Size            string  `json:"size"`
 	Quantity        int     `json:"quantity"`
 	Address         string  `json:"address"`
+	Mark            string  `json:"mark"`
 	StatusNotePhoto string  `json:"status_note_photo"`
 	CostEur         float64 `json:"cost_eur"`
 	ExchangeRate    float64 `json:"exchange_rate"`
@@ -96,10 +97,10 @@ func CreateProduct(p *Product) error {
 	result, err := database.DB.Exec(
 		`INSERT INTO cc_product
 		(user_id, area_id, photo, customer_name, size, quantity, address, status_note_photo,
-		cost_eur, exchange_rate, cost_rmb, price_rmb, shipping_fee, total_cost, profit)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		cost_eur, exchange_rate, cost_rmb, price_rmb, shipping_fee, total_cost, profit,mark)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		p.UserID, p.AreaID, p.Photo, p.CustomerName, p.Size, p.Quantity, p.Address, p.StatusNotePhoto,
-		p.CostEur, p.ExchangeRate, p.CostRMB, p.PriceRMB, p.ShippingFee, p.TotalCost, p.Profit,
+		p.CostEur, p.ExchangeRate, p.CostRMB, p.PriceRMB, p.ShippingFee, p.TotalCost, p.Profit, p.Mark,
 	)
 	if err != nil {
 		return err
@@ -124,11 +125,11 @@ func UpdateProduct(p *Product) error {
 		`UPDATE cc_product SET
 		area_id=?, photo=?, customer_name=?, size=?, quantity=?, address=?, status_note_photo=?,
 		cost_eur=?, exchange_rate=?, cost_rmb=?, price_rmb=?, shipping_fee=?,
-		total_cost=?, profit=?
+		total_cost=?, profit=?,mark=? 
 		WHERE id=?`,
 		p.AreaID, p.Photo, p.CustomerName, p.Size, p.Quantity, p.Address, p.StatusNotePhoto,
 		p.CostEur, p.ExchangeRate, p.CostRMB, p.PriceRMB, p.ShippingFee,
-		p.TotalCost, p.Profit, p.ID,
+		p.TotalCost, p.Profit, p.Mark, p.ID,
 	)
 	return err
 }
@@ -161,6 +162,8 @@ func UpdateProductField(id, userID int, field string, value interface{}) (*Produ
 		product.Quantity = parseQuantityFromSize(product.Size)
 	case "address":
 		product.Address = value.(string)
+	case "mark":
+		product.Mark = value.(string)
 	case "status_note_photo":
 		product.StatusNotePhoto = value.(string)
 	case "cost_eur":
@@ -193,7 +196,7 @@ func DeleteProducts(ids []int, userID int) error {
 	}
 
 	placeholders := make([]string, len(ids))
-	args := make([]interface{}, len(ids)+1)
+	args := make([]interface{}, len(ids))
 
 	for i, id := range ids {
 		placeholders[i] = "?"
@@ -211,13 +214,13 @@ func GetProductByID(id, userID int) (*Product, error) {
 	err := database.DB.QueryRow(
 		`SELECT id, user_id, area_id, photo, customer_name, size, quantity, address, status_note_photo,
 		cost_eur, exchange_rate, cost_rmb, price_rmb, shipping_fee, total_cost, profit,
-		created_at, updated_at
+		created_at, updated_at, mark 
 		FROM cc_product WHERE id=?`,
 		id,
 	).Scan(
 		&p.ID, &p.UserID, &p.AreaID, &p.Photo, &p.CustomerName, &p.Size, &p.Quantity, &p.Address, &p.StatusNotePhoto,
 		&p.CostEur, &p.ExchangeRate, &p.CostRMB, &p.PriceRMB, &p.ShippingFee, &p.TotalCost, &p.Profit,
-		&p.CreatedAt, &p.UpdatedAt,
+		&p.CreatedAt, &p.UpdatedAt, p.Mark,
 	)
 
 	if err == sql.ErrNoRows {
@@ -260,9 +263,9 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 	}
 
 	if keyword != "" {
-		whereClause += " AND (customer_name LIKE ? OR size LIKE ? OR address LIKE ?)"
+		whereClause += " AND (customer_name LIKE ? OR size LIKE ? OR address LIKE ? OR mark LIKE ? OR cost_eur LIKE ? OR cost_rmb LIKE ? OR price_rmb LIKE ? OR shipping_fee LIKE ? OR total_cost LIKE ? OR profit LIKE ?)"
 		searchPattern := "%" + keyword + "%"
-		args = append(args, searchPattern, searchPattern, searchPattern)
+		args = append(args, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern)
 	}
 
 	// 添加时间范围查询
@@ -288,7 +291,7 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 	query := fmt.Sprintf(`
 		SELECT id, user_id, area_id, photo, customer_name, size, quantity, address, status_note_photo,
 		cost_eur, exchange_rate, cost_rmb, price_rmb, shipping_fee, total_cost, profit,
-		created_at, updated_at
+		created_at, updated_at, mark 
 		FROM cc_product
 		%s
 		ORDER BY %s %s
@@ -308,18 +311,18 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 		err := rows.Scan(
 			&p.ID, &p.UserID, &p.AreaID, &p.Photo, &p.CustomerName, &p.Size, &p.Quantity, &p.Address, &p.StatusNotePhoto,
 			&p.CostEur, &p.ExchangeRate, &p.CostRMB, &p.PriceRMB, &p.ShippingFee, &p.TotalCost, &p.Profit,
-			&p.CreatedAt, &p.UpdatedAt,
+			&p.CreatedAt, &p.UpdatedAt, &p.Mark,
 		)
 		if err != nil {
 			return nil, err
 		}
-		if userID!=1{
-			p.CostEur=0.0
-			p.ExchangeRate=0.0
-			p.CostRMB=0.0
-			p.TotalCost=0.0
-			p.Profit=0.0
-			p.ShippingFee=0.0
+		if userID != 1 {
+			p.CostEur = 0.0
+			p.ExchangeRate = 0.0
+			p.CostRMB = 0.0
+			p.TotalCost = 0.0
+			p.Profit = 0.0
+			p.ShippingFee = 0.0
 		}
 
 		list = append(list, p)
@@ -377,13 +380,13 @@ func GetSummary(userID int, areaID *int) (*Summary, error) {
 	if err != nil {
 		return nil, err
 	}
-	if userID!=1{
-		summary.TotalCostEur=0.0
-		summary.TotalCostRMB=0.0
-		summary.TotalPriceRMB=0.0
-		summary.TotalShippingFee=0.0
-		summary.TotalCost=0.0
-		summary.TotalProfit=0.0
+	if userID != 1 {
+		summary.TotalCostEur = 0.0
+		summary.TotalCostRMB = 0.0
+		summary.TotalPriceRMB = 0.0
+		summary.TotalShippingFee = 0.0
+		summary.TotalCost = 0.0
+		summary.TotalProfit = 0.0
 	}
 	return summary, nil
 }

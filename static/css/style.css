@@ -471,7 +471,12 @@ body {
 
 .col-address {
     width: 180px;
-    min-width: 120px;
+    min-width: 80px;
+}
+
+.col-mark {
+    width: 100px;
+    min-width: 30px;
 }
 
 .col-photo {

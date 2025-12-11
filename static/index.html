@@ -43,7 +43,7 @@
                 <span class="btn-icon">↻</span> 刷新
             </button>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="搜索客户名、尺码、地址..." onkeypress="handleSearchKeyPress(event)">
+                <input type="text" id="searchInput" placeholder="关键子搜索..." onkeypress="handleSearchKeyPress(event)">
                 <input type="datetime-local" id="startTime" placeholder="开始时间">
                 <input type="datetime-local" id="endTime" placeholder="结束时间">
                 <button class="btn-search" onclick="handleSearch()">
@@ -71,6 +71,7 @@
                         <th data-field="size">尺码</th>
                         <th data-field="quantity">件数</th>
                         <th class="col-address">收件地址</th>
+                        <th class="col-mark">备注</th>
                         <th class="col-photo">货物状态</th>
                         <th data-field="updated_at">更新时间</th>
                         <th data-field="cost_eur">成本欧元</th>
@@ -128,7 +129,7 @@
         </div>
     </div>
 
-    <script src="/static/js/common.js?v=2"></script>
-    <script src="/static/js/main.js?v=2"></script>
+    <script src="/static/js/common.js?v=3"></script>
+    <script src="/static/js/main.js?v=3"></script>
 </body>
 </html>

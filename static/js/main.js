@@ -207,6 +207,7 @@ function renderProducts(data) {
             <td class="editable-cell" onclick="editCell(this, ${product.id}, 'size')">${product.size || ''}</td>
             <td class="calculated-cell">${product.quantity || 0}件</td>
             <td class="editable-cell" onclick="editCell(this, ${product.id}, 'address')">${product.address || ''}</td>
+            <td class="editable-cell" onclick="editCell(this, ${product.id}, 'mark')">${product.mark || ''}</td>
             <td class="col-photo" ondrop="dropImage(event,${product.id}, 'status_note_photo')" ondragover="allowDrop(event)">
                 ${product.status_note_photo ?
                     `<img src="${product.status_note_photo}?w=300&h=300" class="product-image" onclick="viewImage('${product.status_note_photo}', ${product.id}, 'status_note_photo')">` :
@@ -333,7 +334,7 @@ function editCell(cell, productId, field) {
     }
 
     const currentValue = cell.textContent.trim();
-    const isTextarea = field === 'address' || field === 'size';
+    const isTextarea = field === 'address' || field === 'size' || field === 'mark';
 
     const input = document.createElement(isTextarea ? 'textarea' : 'input');
     input.value = currentValue;
@@ -604,6 +605,7 @@ async function addProduct() {
                 customer_name: '',
                 size: '',
                 address: '',
+                mark: '',
                 cost_eur: 0,
                 exchange_rate: 0,
                 price_rmb: 0,
