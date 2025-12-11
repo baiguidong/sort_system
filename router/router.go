@@ -14,7 +14,7 @@ func SetupRouter() *gin.Engine {
 	// CORS配置
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
-	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "X-User-ID"}
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "X-User-ID", "Token"}
 	r.Use(cors.New(config))
 
 	// 静态文件服务

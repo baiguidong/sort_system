@@ -37,6 +37,7 @@ async function apiRequest(url, options = {}) {
 
     if (userInfo && userInfo.user_id) {
         headers['X-User-ID'] = userInfo.user_id.toString();
+        headers['Token'] = userInfo.token;
     }
 
     try {
@@ -74,7 +75,8 @@ async function uploadImage(file) {
         const response = await fetch(API_BASE + '/api/upload', {
             method: 'POST',
             headers: {
-                'X-User-ID': userInfo.user_id.toString()
+                'X-User-ID': userInfo.user_id.toString(),
+                'token': userInfo.token
             },
             body: formData
         });

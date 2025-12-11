@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `cc_product` (
   `area_id` INT DEFAULT NULL COMMENT '区域ID',
   `photo` VARCHAR(500) DEFAULT NULL COMMENT '照片URL',
   `customer_name` VARCHAR(200) DEFAULT NULL COMMENT '客户名',
+  `brand` VARCHAR(200) DEFAULT NULL COMMENT '品牌',
   `size` VARCHAR(50) DEFAULT NULL COMMENT '尺码',
   `quantity` INT DEFAULT 0 COMMENT '件数（自动从尺码解析）',
   `address` TEXT DEFAULT NULL COMMENT '收件地址',

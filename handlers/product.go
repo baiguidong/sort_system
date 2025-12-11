@@ -78,6 +78,17 @@ func UpdateProductField(c *gin.Context) {
 		return
 	}
 
+	if userID != 1 {
+		if req.Field == "status_note_photo" || req.Field == "photo" || req.Field == "mark" {
+
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"code":    -1,
+				"message": "你没有权限更改这个字段",
+			})
+			return
+		}
+	}
 	// 转换数字类型
 	var value interface{} = req.Value
 	if req.Field == "cost_eur" || req.Field == "exchange_rate" ||

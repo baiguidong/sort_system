@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (data.code === 0) {
+                console.log(data.data)
                 saveUserInfo(data.data);
                 window.location.href = '/index';
             } else {

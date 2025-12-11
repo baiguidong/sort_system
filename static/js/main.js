@@ -221,7 +221,7 @@ function renderProducts(data) {
                 <input type="checkbox" class="row-checkbox" value="${product.id}"
                     onchange="toggleRowSelect(this)" ${selectedIds.has(product.id) ? 'checked' : ''}>
             </td>
-            <td class="calculated-cell">${product.id}</td>
+            <td class="calculated-cell">${product.sid}</td>
             <td class="col-photo" ondrop="dropImage(event,${product.id}, 'photo')" ondragover="allowDrop(event)">
                 ${product.photo ?
                     `<img src="${product.photo}?w=300&h=300" class="product-image" onclick="viewImage('${product.photo}', ${product.id}, 'photo')">` :
@@ -230,6 +230,7 @@ function renderProducts(data) {
             </td>
 
             <td class="editable-cell" onclick="editCell(this, ${product.id}, 'customer_name')" >${product.customer_name || ''}</td>
+            <td class="editable-cell" onclick="editCell(this, ${product.id}, 'brand')" >${product.brand || ''}</td>
             <td class="editable-cell" onclick="editCell(this, ${product.id}, 'size')">${product.size || ''}</td>
             <td class="calculated-cell">${product.quantity || 0}件</td>
             <td class="editable-cell" onclick="editCell(this, ${product.id}, 'address')">${product.address || ''}</td>
@@ -269,9 +270,10 @@ function renderSummary(summary) {
     if (isAdmin) {
         tfoot.innerHTML = `
             <tr>
-                <td colspan="4" style="text-align:right;"><strong>汇总:</strong></td>
+                <td colspan="5" style="text-align:right;"><strong>汇总:</strong></td>
+                <td colspan="1"></td>
                 <td><strong>${summary.total_quantity || 0}件</strong></td>
-                <td colspan="2"></td>
+                <td colspan="4"></td>
                 <td class="financial-column"><strong>${formatNumber(summary.total_cost_eur)}</strong></td>
                 <td class="financial-column">-</td>
                 <td class="financial-column"><strong>${formatNumber(summary.total_cost_rmb)}</strong></td>
@@ -367,7 +369,6 @@ function goToPage(page) {
 }
 
 
-
 // 编辑单元格
 function editCell(cell, productId, field) {
     // 如果单元格已经在编辑状态，不再处理
@@ -441,7 +442,6 @@ function editCell(cell, productId, field) {
         }
     });
 }
-
 
 // 更新计算字段
 function updateCalculatedFields(row, product) {
@@ -676,6 +676,7 @@ async function addProduct() {
             body: JSON.stringify({
                 area_id: currentAreaId,
                 customer_name: '',
+                brand: '',
                 size: '',
                 address: '',
                 mark: '',

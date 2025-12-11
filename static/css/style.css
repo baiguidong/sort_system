@@ -474,6 +474,11 @@ body {
     min-width: 80px;
 }
 
+.col-brand {
+    width: 120px;
+    min-width: 60px;
+}
+
 .col-mark {
     width: 100px;
     min-width: 30px;

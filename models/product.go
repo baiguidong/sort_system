@@ -9,11 +9,13 @@ import (
 )
 
 type Product struct {
+	SID             int     `json:"sid"`
 	ID              int     `json:"id"`
 	UserID          int     `json:"user_id"`
 	AreaID          *int    `json:"area_id"`
 	Photo           string  `json:"photo"`
 	CustomerName    string  `json:"customer_name"`
+	Brand           string  `json:"brand"`
 	Size            string  `json:"size"`
 	Quantity        int     `json:"quantity"`
 	Address         string  `json:"address"`
@@ -97,10 +99,10 @@ func CreateProduct(p *Product) error {
 	result, err := database.DB.Exec(
 		`INSERT INTO cc_product
 		(user_id, area_id, photo, customer_name, size, quantity, address, status_note_photo,
-		cost_eur, exchange_rate, cost_rmb, price_rmb, shipping_fee, total_cost, profit,mark)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		cost_eur, exchange_rate, cost_rmb, price_rmb, shipping_fee, total_cost, profit,mark,brand)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		p.UserID, p.AreaID, p.Photo, p.CustomerName, p.Size, p.Quantity, p.Address, p.StatusNotePhoto,
-		p.CostEur, p.ExchangeRate, p.CostRMB, p.PriceRMB, p.ShippingFee, p.TotalCost, p.Profit, p.Mark,
+		p.CostEur, p.ExchangeRate, p.CostRMB, p.PriceRMB, p.ShippingFee, p.TotalCost, p.Profit, p.Mark, p.Brand,
 	)
 	if err != nil {
 		return err
@@ -125,11 +127,11 @@ func UpdateProduct(p *Product) error {
 		`UPDATE cc_product SET
 		area_id=?, photo=?, customer_name=?, size=?, quantity=?, address=?, status_note_photo=?,
 		cost_eur=?, exchange_rate=?, cost_rmb=?, price_rmb=?, shipping_fee=?,
-		total_cost=?, profit=?,mark=? 
+		total_cost=?, profit=?,mark=?,brand=? 
 		WHERE id=?`,
 		p.AreaID, p.Photo, p.CustomerName, p.Size, p.Quantity, p.Address, p.StatusNotePhoto,
 		p.CostEur, p.ExchangeRate, p.CostRMB, p.PriceRMB, p.ShippingFee,
-		p.TotalCost, p.Profit, p.Mark, p.ID,
+		p.TotalCost, p.Profit, p.Mark, p.Brand, p.ID,
 	)
 	return err
 }
@@ -157,6 +159,8 @@ func UpdateProductField(id, userID int, field string, value interface{}) (*Produ
 		product.Photo = value.(string)
 	case "customer_name":
 		product.CustomerName = value.(string)
+	case "brand":
+		product.Brand = value.(string)
 	case "size":
 		product.Size = value.(string)
 		product.Quantity = parseQuantityFromSize(product.Size)
@@ -214,13 +218,13 @@ func GetProductByID(id, userID int) (*Product, error) {
 	err := database.DB.QueryRow(
 		`SELECT id, user_id, area_id, photo, customer_name, size, quantity, address, status_note_photo,
 		cost_eur, exchange_rate, cost_rmb, price_rmb, shipping_fee, total_cost, profit,
-		created_at, updated_at, mark 
+		created_at, updated_at, mark, brand 
 		FROM cc_product WHERE id=?`,
 		id,
 	).Scan(
 		&p.ID, &p.UserID, &p.AreaID, &p.Photo, &p.CustomerName, &p.Size, &p.Quantity, &p.Address, &p.StatusNotePhoto,
 		&p.CostEur, &p.ExchangeRate, &p.CostRMB, &p.PriceRMB, &p.ShippingFee, &p.TotalCost, &p.Profit,
-		&p.CreatedAt, &p.UpdatedAt, &p.Mark,
+		&p.CreatedAt, &p.UpdatedAt, &p.Mark, &p.Brand,
 	)
 
 	if err == sql.ErrNoRows {
@@ -263,9 +267,9 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 	}
 
 	if keyword != "" {
-		whereClause += " AND (customer_name LIKE ? OR size LIKE ? OR address LIKE ? OR mark LIKE ? OR cost_eur LIKE ? OR cost_rmb LIKE ? OR price_rmb LIKE ? OR shipping_fee LIKE ? OR total_cost LIKE ? OR profit LIKE ?)"
+		whereClause += " AND (customer_name LIKE ? OR size LIKE ? OR address LIKE ? OR mark LIKE ? OR cost_eur LIKE ? OR cost_rmb LIKE ? OR price_rmb LIKE ? OR shipping_fee LIKE ? OR total_cost LIKE ? OR profit LIKE ? OR brand LIKE ?)"
 		searchPattern := "%" + keyword + "%"
-		args = append(args, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern)
+		args = append(args, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern)
 	}
 
 	// 添加时间范围查询
@@ -291,7 +295,7 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 	query := fmt.Sprintf(`
 		SELECT id, user_id, area_id, photo, customer_name, size, quantity, address, status_note_photo,
 		cost_eur, exchange_rate, cost_rmb, price_rmb, shipping_fee, total_cost, profit,
-		created_at, updated_at, mark 
+		created_at, updated_at, mark,brand 
 		FROM cc_product
 		%s
 		ORDER BY %s %s
@@ -306,12 +310,13 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 	defer rows.Close()
 
 	list := []*Product{}
+	sid := 0
 	for rows.Next() {
 		p := &Product{}
 		err := rows.Scan(
 			&p.ID, &p.UserID, &p.AreaID, &p.Photo, &p.CustomerName, &p.Size, &p.Quantity, &p.Address, &p.StatusNotePhoto,
 			&p.CostEur, &p.ExchangeRate, &p.CostRMB, &p.PriceRMB, &p.ShippingFee, &p.TotalCost, &p.Profit,
-			&p.CreatedAt, &p.UpdatedAt, &p.Mark,
+			&p.CreatedAt, &p.UpdatedAt, &p.Mark, &p.Brand,
 		)
 		if err != nil {
 			return nil, err
@@ -324,7 +329,8 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 			p.Profit = 0.0
 			p.ShippingFee = 0.0
 		}
-
+		sid++
+		p.SID = sid
 		list = append(list, p)
 	}
 

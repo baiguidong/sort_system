@@ -15,6 +15,7 @@ type LoginRequest struct {
 type LoginResponse struct {
 	UserID int    `json:"user_id"`
 	Name   string `json:"name"`
+	Token  string `json:"token"`
 }
 
 func Login(c *gin.Context) {
@@ -40,6 +41,7 @@ func Login(c *gin.Context) {
 		"data": LoginResponse{
 			UserID: user.ID,
 			Name:   user.Name,
+			Token:  user.Token,
 		},
 		"message": "登录成功",
 	})
