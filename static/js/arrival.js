@@ -1,6 +1,6 @@
 // 全局变量
 let currentPage = 1;
-let pageSize = 20;
+let pageSize = 200;
 let totalPages = 1;
 let currentSort = { field: 'id', dir: 'DESC' };
 let selectedIds = new Set();

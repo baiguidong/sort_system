@@ -162,9 +162,6 @@ func GetProductList(c *gin.Context) {
 	if page < 1 {
 		page = 1
 	}
-	if pageSize < 1 || pageSize > 100 {
-		pageSize = 20
-	}
 
 	result, err := models.GetProductList(userID, page, pageSize, orderBy, orderDir, keyword, startTime, endTime, areaID)
 	if err != nil {
