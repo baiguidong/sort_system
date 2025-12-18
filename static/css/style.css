@@ -379,13 +379,23 @@ body {
 .table-container {
     overflow-x: auto;
     max-height: calc(100vh - 180px);
+    /* 移动端触摸优化 */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+/* 确保表头固定时不会遮挡拖动手柄 */
+.table-container table {
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
 .data-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
-    table-layout: fixed;
+    /* 改为auto布局以避免列重叠 */
+    table-layout: auto;
 }
 
 .data-table thead {
@@ -462,6 +472,10 @@ body {
 .col-checkbox {
     width: 40px;
     text-align: center;
+    padding: 0;
+    /* 确保复选框列在各种屏幕尺寸下都能正确显示 */
+    min-width: 32px;
+    max-width: 40px;
 }
 
 .col-id {
@@ -486,6 +500,35 @@ body {
 
 .col-photo {
     width: 100px;
+}
+
+/* 添加缺失的列宽度定义 */
+[data-field="customer_name"] {
+    width: 120px;
+    min-width: 100px;
+}
+
+[data-field="size"] {
+    width: 80px;
+    min-width: 60px;
+}
+
+[data-field="quantity"] {
+    width: 80px;
+    min-width: 60px;
+    text-align: center;
+}
+
+[data-field="updated_at"] {
+    width: 150px;
+    min-width: 130px;
+}
+
+/* 财务相关列的宽度设置 */
+.financial-column {
+    min-width: 80px;
+    width: 100px;
+    text-align: right;
 }
 
 .product-image {
@@ -572,6 +615,7 @@ body {
     cursor: col-resize;
     z-index: 1;
     background: transparent;
+    touch-action: none; /* 防止触摸事件冒泡 */
 }
 
 .resize-handle:hover {
@@ -584,6 +628,22 @@ body {
 
 .data-table th.resizing {
     user-select: none;
+}
+
+/* 移动端拖动手柄增强 - 放置在表头右侧，更容易触摸 */
+@media (max-width: 768px) {
+    .resize-handle {
+        width: 8px;
+        right: -2px;
+        opacity: 0.6;
+    }
+
+    .resize-handle:hover,
+    .resize-handle:active {
+        width: 12px;
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.4);
+    }
 }
 
 /* 分页 */
@@ -753,27 +813,47 @@ body {
     border-bottom: 1px solid #eee;
 }
 
-/* 响应式 */
+/* 响应式 - 超小屏幕 */
 @media (max-width: 768px) {
     .header {
         padding: 10px 15px;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
     .header h1 {
         font-size: 16px;
     }
 
+    .tab-nav {
+        width: 100%;
+        padding: 0 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .tab-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-item {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+
     .toolbar {
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
         align-items: stretch;
-        padding: 10px 15px;
+        padding: 12px 15px;
         margin: 5px 10px 0 10px;
     }
 
     .toolbar-left {
         width: 100%;
         flex-direction: column;
+        gap: 8px;
     }
 
     .toolbar-right {
@@ -782,38 +862,253 @@ body {
     }
 
     .search-box {
+        flex-direction: column;
+        gap: 8px;
         max-width: 100%;
         margin-left: 0;
     }
 
+    .search-box input[type="text"],
+    .search-box input[type="datetime-local"],
+    .search-box .btn-search {
+        width: 100%;
+        min-width: unset;
+        text-align: center;
+    }
+
+    .search-box .btn-search {
+        margin-top: 4px;
+    }
+
     .table-wrapper {
         margin: 5px 10px 0 10px;
+        border-radius: 4px;
     }
 
     .table-container {
-        font-size: 12px;
+        font-size: 11px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-height: calc(100vh - 220px);
+    }
+
+    .data-table {
+        min-width: 800px; /* 保证最小宽度，强制横向滚动 */
+        /* 确保表格在移动端正确渲染 */
+        table-layout: fixed;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 6px 4px;
+        font-size: 11px;
+        /* 确保单元格内容不溢出 */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .product-image {
+        width: 60px;
+        height: 60px;
     }
 
     .pagination {
         margin: 5px 10px 5px 10px;
         padding: 8px 10px;
         gap: 5px;
+        flex-direction: column;
     }
 
     .pagination .page-numbers {
         gap: 3px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination .page-number {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+        font-size: 12px;
+    }
+
+    .pagination .page-info {
+        font-size: 11px;
+        margin: 0;
+        justify-content: center;
+    }
+
+    /* 模态框移动端优化 */
+    .modal-content {
+        margin: 5% auto;
+        padding: 20px;
+        width: 95%;
+        max-width: 450px;
+    }
+
+    .image-modal-content {
+        padding: 15px;
+    }
+
+    .modal-content h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .close {
+        font-size: 32px;
+        line-height: 24px;
+    }
+
+    .modal-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-actions button {
+        width: 100%;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
+
+    /* 用户信息下拉菜单移动端适配 */
+    .user-info:hover .user-dropdown {
+        display: block;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 300px;
+        margin: 0;
+        z-index: 1001;
+    }
+
+    .user-dropdown button {
+        padding: 12px 20px;
+        text-align: center;
+    }
+
+    /* 按钮大小调整 */
+    .btn-add, .btn-delete, .btn-refresh, .btn-search {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+    }
+
+    /* 工具栏按钮组 */
+    .toolbar-left button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .total-info {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
+
+/* 超小屏幕 - 手机竖屏 */
+@media (max-width: 480px) {
+    .header {
+        padding: 8px 10px;
+    }
+
+    .header h1 {
+        font-size: 14px;
+    }
+
+    .tab-item {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .toolbar {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .btn-add, .btn-delete, .btn-refresh, .btn-search {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 4px 3px;
+        font-size: 10px;
+    }
+
+    .col-checkbox {
+        width: 32px;
+    }
+
+    .pagination {
+        padding: 6px 8px;
     }
 
     .pagination .page-number {
         min-width: 28px;
         height: 28px;
         padding: 0 6px;
-        font-size: 12px;
+        font-size: 11px;
     }
 
-    .pagination .page-info {
-        font-size: 12px;
-        margin: 0 5px;
+    .modal-content {
+        padding: 15px;
+        width: 95%;
+    }
+
+    .login-box {
+        padding: 25px;
+    }
+
+    .login-box h1 {
+        font-size: 22px;
+    }
+}
+
+/* 横屏模式优化 */
+@media (max-width: 768px) and (orientation: landscape) {
+    .toolbar-left {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .toolbar-left button {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .search-box {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .search-box input[type="text"] {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .search-box input[type="datetime-local"] {
+        min-width: 140px;
+    }
+
+    .search-box .btn-search {
+        width: auto;
+        margin-left: 8px;
+        margin-top: 0;
     }
 }
 
@@ -839,4 +1134,430 @@ body {
 .product-image {
     max-width: 100%;
     max-height: 100px;
+}
+
+/* ==================== 移动端触摸优化和增强 ==================== */
+
+/* 增加触摸目标大小 */
+@media (max-width: 768px) {
+    /* 确保所有可点击元素有足够的触摸区域 */
+    button:not([disabled]),
+    .editable-cell,
+    .product-image {
+        min-height: 36px;
+        min-width: 36px;
+    }
+
+    /* 优化复选框在移动端的显示 */
+    input[type="checkbox"] {
+        transform: scale(1.2);
+        margin: 0 auto;
+        display: block;
+        /* 确保复选框在所有情况下都能正确显示 */
+        width: 18px;
+        height: 18px;
+    }
+
+    /* 防止移动端点击闪烁 */
+    button, .tab-item, .editable-cell, .product-image {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+
+    /* 增强可点击行的视觉反馈 */
+    .data-table tbody tr {
+        border-left: 3px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .data-table tbody tr:active {
+        background-color: #e9ecef;
+        border-left-color: #667eea;
+    }
+
+    /* 优化表单输入 */
+    input[type="text"],
+    input[type="password"],
+    input[type="datetime-local"],
+    textarea {
+        font-size: 16px; /* iOS最小字体大小，防止缩放 */
+        -webkit-appearance: none;
+        appearance: none;
+        border-radius: 6px;
+    }
+
+    /* 移动端下拉菜单替代方案 */
+    .user-info {
+        position: relative;
+    }
+
+    /* 移动端友好的微调器样式 */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* 触摸反馈动画 */
+    .btn-add:active,
+    .btn-delete:active,
+    .btn-refresh:active,
+    .btn-search:active,
+    .btn-primary:active {
+        transform: scale(0.98);
+    }
+
+    /* 优化滚动体验 */
+    .table-container {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+
+    /* 防止页面滚动时的内容跳动 */
+    html, body {
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* 超小屏幕特殊处理 */
+@media (max-width: 480px) {
+    /* 更小的触摸目标但保持可用性 */
+    button:not([disabled]) {
+        min-height: 32px;
+        padding: 6px 8px;
+    }
+
+    /* 输入框最小高度 */
+    input[type="text"],
+    input[type="password"],
+    input[type="datetime-local"] {
+        min-height: 38px;
+        padding: 8px 10px;
+    }
+
+    /* 优化数值输入 */
+    .search-box .btn-search {
+        min-height: 40px;
+        font-weight: 600;
+    }
+}
+
+/* 错误和加载状态增强 */
+.error-message {
+    color: #e74c3c;
+    background-color: #ffe6e6;
+    border: 1px solid #ffcccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .error-message {
+        font-size: 13px;
+        text-align: left;
+    }
+}
+
+/* 成功提示样式 */
+.success-message {
+    color: #27ae60;
+    background-color: #e8f8f0;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .success-message {
+        font-size: 13px;
+        text-align: left;
+    }
+}
+
+/* 加载状态 */
+.loading-indicator {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 5px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 禁用状态的更好视觉反馈 */
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    button:disabled {
+        opacity: 0.4;
+    }
+}
+
+/* 移动端特别优化 - 防止缩放问题 */
+@media (max-width: 768px) {
+    /* 防止输入框被iOS键盘遮挡 */
+    input:focus, textarea:focus, select:focus {
+        font-size: 16px; /* iOS Safari会放大小于16px的字体 */
+    }
+
+    /* 优化表格在移动设备上的可读性 */
+    .data-table tbody tr {
+        cursor: pointer;
+    }
+
+    /* 确保横屏时表格最小可读宽度 */
+    @media (orientation: landscape) and (max-width: 768px) {
+        .data-table {
+            min-width: 900px;
+        }
+    }
+}
+
+/* 移动端触摸反馈 - 为行添加点击效果 */
+@media (hover: none) {
+    .data-table tbody tr:active {
+        background-color: rgba(102, 126, 234, 0.1) !important;
+    }
+}
+
+/* 移动端日期选择器优化 */
+@media (max-width: 768px) {
+    input[type="date"],
+    input[type="datetime-local"] {
+        min-height: 40px;
+    }
+
+    .search-box {
+        gap: 8px;
+    }
+}
+
+/* 小屏设备优化表格列显示 */
+@media (max-width: 480px) {
+    /* 在极窄屏上缩小部分列的宽度 */
+    .col-checkbox {
+        width: 28px;
+        min-width: 28px;
+        max-width: 28px;
+        text-align: center;
+        padding: 0;
+    }
+
+    /* 确保复选框居中对齐并增大触摸区域 */
+    .col-checkbox input[type="checkbox"] {
+        margin: 0 auto;
+        display: block;
+        transform: scale(1.2);
+        cursor: pointer;
+        /* 增大实际可点击区域 */
+        width: 16px;
+        height: 16px;
+        position: relative;
+    }
+
+    /* 复选框点击区域增强 */
+    .col-checkbox {
+        cursor: pointer;
+    }
+
+    .col-id {
+        width: 32px;
+        min-width: 40px;
+    }
+
+    .col-brand {
+        width: 80px;
+        min-width: 50px;
+    }
+
+    .col-photo {
+        width: 60px;
+        min-width: 60px;
+    }
+
+    /* 调整最后一列的宽度，确保能正常显示 */
+    .data-table th:last-child,
+    .data-table td:last-child {
+        width: auto;
+        min-width: 120px;
+        white-space: nowrap;
+    }
+    
+    /* 财务列在超小屏幕上的特殊处理 */
+    .financial-column {
+        min-width: 70px;
+        width: 80px;
+        font-size: 10px;
+        padding: 3px 2px;
+    }
+}
+
+    /* 调整表格头部字体大小 */
+    .data-table th {
+        font-size: 11px;
+        padding: 6px 4px;
+        position: relative;
+    }
+
+    /* 极窄屏的拖动手柄调整 - 更宽更明显 */
+    .resize-handle {
+        width: 12px;
+        right: -6px;
+        opacity: 0.6;
+    }
+}
+
+/* 针对所有小屏幕优化（包括480-768px） */
+@media (max-width: 768px) {
+    /* 优化复选框列 - 减小宽度 */
+    .col-checkbox {
+        width: 32px;
+        min-width: 32px;
+        max-width: 32px;
+        text-align: center;
+        padding: 0;
+    }
+
+    /* 强制所有列使用固定布局，防止内容撑开 */
+    .data-table {
+        table-layout: fixed;
+    }
+
+    /* 确保表头层叠关系正确 */
+    .data-table th {
+        position: relative;
+    }
+
+    /* 优化单元格触摸目标 */
+    .data-table tbody td {
+        min-height: 44px; /* 标准触摸目标大小 */
+        word-break: break-word; /* 长文本自动换行 */
+    }
+
+    /* 禁用文本选择，提升滑动体验 */
+    .data-table tbody tr {
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    /* 调整最后一列的宽度，确保能正常显示 */
+    .data-table th:last-child,
+    .data-table td:last-child {
+        width: auto;
+        min-width: 120px;
+        white-space: nowrap;
+    }
+    
+    /* 财务列在移动端的特殊处理 */
+    .financial-column {
+        min-width: 80px;
+        width: 90px;
+        font-size: 11px;
+        padding: 4px 3px;
+        text-align: right;
+    }
+}
+
+/* 移动端悬浮操作按钮（FAB） */
+.mobile-fab {
+    display: none; /* 默认隐藏，移动端显示 */
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 999;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.fab-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.fab-btn:active {
+    transform: scale(0.92);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.fab-add {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    animation: fab-pulse 2s infinite;
+}
+
+.fab-refresh {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+}
+
+/* FAB入场动画 */
+@keyframes fab-pulse {
+    0% {
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.6);
+    }
+    100% {
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+}
+
+/* 仅在移动端显示FAB按钮 */
+@media (max-width: 768px) {
+    .mobile-fab {
+        display: flex;
+    }
+
+    /* 增加FAB的触摸区域（视觉上56px，实际更大） */
+    .fab-btn {
+        min-width: 48px;
+        min-height: 48px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-fab {
+        bottom: 70px;
+        right: 16px;
+        gap: 10px;
+    }
+
+    .fab-btn {
+        width: 52px;
+        height: 52px;
+    }
+
+    .fab-refresh {
+        width: 44px;
+        height: 44px;
+    }
 }

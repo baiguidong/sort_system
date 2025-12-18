@@ -50,7 +50,7 @@ function extractQuantity(sizeStr) {
 }
 
 // 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     if (!checkLogin()) return;
 
     const userInfo = getUserInfo();
@@ -74,11 +74,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化列宽调整功能
     initColumnResize('#dataTable');
 
-    // 加载区域tabs
-    loadTabs();
+    // 加载区域tabs并等待完成（重要：必须先加载区域再加载产品）
+    await loadTabs();
 
     // 加载产品列表
     loadProducts();
+
+    // 页面加载完成后再次优化移动端显示（确保样式正确应用）
+    if (window.innerWidth <= 768) {
+        setTimeout(() => {
+            if (typeof optimizeMobileTableDisplay === 'function') {
+                optimizeMobileTableDisplay();
+            }
+        }, 500);
+    }
 });
 
 // 隐藏财务相关列
@@ -106,6 +115,10 @@ async function loadTabs() {
         }
     } catch (error) {
         console.error('加载区域失败:', error);
+        // 加载失败时也设置默认区域，避免后续出错
+        if (areas && areas.length > 0 && !currentAreaId) {
+            currentAreaId = areas[0].id;
+        }
     }
 }
 

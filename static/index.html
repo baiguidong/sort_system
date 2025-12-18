@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商品管理 - 分拣系统</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=7">
+    <link rel="stylesheet" href="/static/css/style.css?v=13">
 </head>
 <body>
     <!-- 顶部导航栏 -->
@@ -131,7 +131,17 @@
         </div>
     </div>
 
-    <script src="/static/js/common.js?v=7"></script>
-    <script src="/static/js/main.js?v=7"></script>
+    <!-- 移动端快捷操作按钮 -->
+    <div class="mobile-fab" id="mobileFab">
+        <button class="fab-btn fab-add" onclick="addProduct()" title="增加">
+            <span>+</span>
+        </button>
+        <button class="fab-btn fab-refresh" onclick="loadProducts()" title="刷新">
+            <span>↻</span>
+        </button>
+    </div>
+
+    <script src="/static/js/common.js?v=12"></script>
+    <script src="/static/js/main.js?v=9"></script>
 </body>
 </html>
