@@ -499,7 +499,9 @@ body {
 }
 
 .col-photo {
-    width: 100px;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
 }
 
 /* 添加缺失的列宽度定义 */
@@ -1385,8 +1387,9 @@ button:disabled {
     }
 
     .col-photo {
-        width: 60px;
-        min-width: 60px;
+        width: 120px;
+        min-width: 120px;
+        max-width: 120px;
     }
 
     /* 调整最后一列的宽度，确保能正常显示 */
@@ -1432,9 +1435,9 @@ button:disabled {
         padding: 0;
     }
 
-    /* 强制所有列使用固定布局，防止内容撑开 */
+    /* 使用自动布局让列宽根据内容和设置的width/min-width属性更灵活地调整 */
     .data-table {
-        table-layout: fixed;
+        table-layout: auto;
     }
 
     /* 确保表头层叠关系正确 */

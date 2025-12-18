@@ -27,6 +27,10 @@ RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o sorting-system .
 # 第二阶段: 运行阶段
 FROM alpine:latest
 
+RUN echo "https://mirrors.tencent.com/alpine/v3.19/main" > /etc/apk/repositories \
+ && echo "https://mirrors.tencent.com/alpine/v3.19/community" >> /etc/apk/repositories \
+ && apk update
+ 
 # 安装必要的运行时依赖
 RUN apk add --no-cache ca-certificates tzdata
 
