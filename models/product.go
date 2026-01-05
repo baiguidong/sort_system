@@ -335,7 +335,7 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 	}
 
 	// 获取汇总数据
-	summary, err := GetSummary(userID, areaID)
+	summary, err := GetSummary(userID, whereClause, args)
 	if err != nil {
 		return nil, err
 	}
@@ -349,17 +349,8 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 	}, nil
 }
 
-func GetSummary(userID int, areaID *int) (*Summary, error) {
+func GetSummary(userID int, whereClause string, args []interface{}) (*Summary, error) {
 	summary := &Summary{}
-
-	whereClause := "WHERE 1=1"
-	args := []interface{}{}
-
-	// 添加区域过滤
-	if areaID != nil {
-		whereClause += " AND area_id=?"
-		args = append(args, *areaID)
-	}
 
 	query := fmt.Sprintf(`
 		SELECT

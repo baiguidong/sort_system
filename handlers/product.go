@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"sorting-system/models"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -148,7 +150,8 @@ func GetProductList(c *gin.Context) {
 	orderBy := c.DefaultQuery("order_by", "id")
 	orderDir := c.DefaultQuery("order_dir", "DESC")
 	keyword := c.DefaultQuery("keyword", "")
-	startTime := c.DefaultQuery("start_time", "")
+	currentMonth := fmt.Sprintf("%s-01 00:00:00", time.Now().Format("2006-01"))
+	startTime := c.DefaultQuery("start_time", currentMonth)
 	endTime := c.DefaultQuery("end_time", "")
 
 	// 解析区域ID
