@@ -274,11 +274,11 @@ func GetProductList(userID, page, pageSize int, orderBy, orderDir, keyword, star
 
 	// 添加时间范围查询
 	if startTime != "" {
-		whereClause += " AND updated_at >= ?"
+		whereClause += " AND created_at >= ?"
 		args = append(args, startTime)
 	}
 	if endTime != "" {
-		whereClause += " AND updated_at <= ?"
+		whereClause += " AND created_at <= ?"
 		args = append(args, endTime)
 	}
 
