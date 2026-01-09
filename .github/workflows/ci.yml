@@ -65,7 +65,7 @@ jobs:
 
     # 3️⃣ 上传二进制 artifact（可选）
     - name: Upload Binary
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: sort_system_${{ github.ref_name }}
         path: ./sort_system  # 如果你 build 出可执行文件
