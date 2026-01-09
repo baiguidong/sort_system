@@ -31,6 +31,7 @@ jobs:
 
       # 4️⃣ 编译二进制
       - name: Build executable
+        shell: bash
         env:
           OS_NAME: ${{ matrix.os }}
         run: |
