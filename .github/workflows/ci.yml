@@ -1,9 +1,17 @@
 name: Go CI + Multi-Platform Release
 
+# 两类触发：
+# 1️⃣ push 或 PR 到 main 分支 -> 执行 CI
+# 2️⃣ push tag -> 执行 Release
 on:
   push:
+    branches:
+      - main
     tags:
-      - 'v*.*.*'  # 推送 tag 自动触发
+      - 'v*.*.*'  # 匹配 v1.0.0, v2.3.1 等语义化版本
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:  # 支持手动触发
 
 jobs:
@@ -35,11 +43,12 @@ jobs:
         env:
           OS_NAME: ${{ matrix.os }}
         run: |
-          echo "Building on $OS_NAME"
           if [[ "$OS_NAME" == "windows-latest" ]]; then
-            go build -o sort_system.exe .
+            go build -o sort_system-windows.exe .
+          elif [[ "$OS_NAME" == "macos-latest" ]]; then
+            go build -o sort_system-macos .
           else
-            go build -o sort_system .
+            go build -o sort_system-linux .
           fi
 
       # 5️⃣ 上传 artifact
