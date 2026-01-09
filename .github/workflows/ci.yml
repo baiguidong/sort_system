@@ -36,9 +36,9 @@ jobs:
         run: |
           echo "Building on $OS_NAME"
           if [[ "$OS_NAME" == "windows-latest" ]]; then
-            go build -o sort_system.exe ./cmd/sort_system
+            go build -o sort_system.exe .
           else
-            go build -o sort_system ./cmd/sort_system
+            go build -o sort_system .
           fi
 
       # 5️⃣ 上传 artifact
