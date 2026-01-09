@@ -32,7 +32,7 @@ jobs:
       # 4️⃣ 编译二进制
       - name: Build executable
         run: |
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
             go build -o sort_system.exe ./...
           else
             go build -o sort_system ./...
@@ -45,7 +45,7 @@ jobs:
           name: sort_system_${{ matrix.os }}_${{ github.ref_name }}
           path: |
             sort_system*
-            
+
   release:
     needs: build
     runs-on: ubuntu-latest
