@@ -31,11 +31,14 @@ jobs:
 
       # 4️⃣ 编译二进制
       - name: Build executable
+        env:
+          OS_NAME: ${{ matrix.os }}
         run: |
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            go build -o sort_system.exe ./...
+          echo "Building on $OS_NAME"
+          if [[ "$OS_NAME" == "windows-latest" ]]; then
+            go build -o sort_system.exe ./cmd/sort_system
           else
-            go build -o sort_system ./...
+            go build -o sort_system ./cmd/sort_system
           fi
 
       # 5️⃣ 上传 artifact
