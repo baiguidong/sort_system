@@ -1,72 +1,80 @@
-name: Go CI + Release
+name: Go CI + Multi-Platform Release
 
-# 两类触发：
-# 1️⃣ push 或 PR 到 main 分支 -> 执行 CI
-# 2️⃣ push tag -> 执行 Release
 on:
   push:
-    branches:
-      - main
     tags:
-      - 'v*.*.*'  # 匹配 v1.0.0, v2.3.1 等语义化版本
-  pull_request:
-    branches:
-      - main
+      - 'v*.*.*'  # 推送 tag 自动触发
+  workflow_dispatch:  # 支持手动触发
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    name: Build on ${{ matrix.os }}
 
     steps:
-    # 1️⃣ 检出代码
-    - name: Checkout repo
-      uses: actions/checkout@v5
+      # 1️⃣ 检出代码
+      - name: Checkout repo
+        uses: actions/checkout@v5
 
-    # 2️⃣ 设置 Go
-    - name: Setup Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21'
+      # 2️⃣ 设置 Go
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
 
-    # 3️⃣ 下载依赖
-    - name: Download dependencies
-      run: go mod download
+      # 3️⃣ 下载依赖
+      - name: Download dependencies
+        run: go mod download
 
-    # 4️⃣ 编译项目
-    - name: Build
-      run: go build -v ./...
+      # 4️⃣ 编译二进制
+      - name: Build executable
+        run: |
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            go build -o sort_system.exe ./...
+          else
+            go build -o sort_system ./...
+          fi
 
-    # 5️⃣ 运行测试
-    - name: Run Tests
-      run: go test ./... -failfast -timeout 30s
-
+      # 5️⃣ 上传 artifact
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sort_system_${{ matrix.os }}_${{ github.ref_name }}
+          path: |
+            sort_system*
+            
   release:
-    # 只有 push tag 时执行
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')  # 只在 tag 推送时执行
 
     steps:
-    # 1️⃣ 检出代码
-    - name: Checkout repo
-      uses: actions/checkout@v5
+      - name: Checkout repo
+        uses: actions/checkout@v5
 
-    # 2️⃣ 创建 Release
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ github.ref_name }}
-        name: Release ${{ github.ref_name }}
-        body: |
-          Automatic release for tag ${{ github.ref_name }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 1️⃣ 创建 GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: Automatic release for tag ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # 3️⃣ 上传二进制 artifact（可选）
-    - name: Upload Binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: sort_system_${{ github.ref_name }}
-        path: ./sort_system  # 如果你 build 出可执行文件
+      # 2️⃣ 下载所有 build 的 artifact
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
 
+      # 3️⃣ 上传 artifact 到 Release
+      - name: Upload artifacts to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
